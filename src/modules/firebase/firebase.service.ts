@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { AppConfigService } from '../../config/config.service';
 import * as admin from 'firebase-admin';
 import { v4 as uuidv4 } from 'uuid';
 import { RecordingMetadata, Statistics, UserStatistics } from '../../types';
@@ -8,10 +8,10 @@ import { RecordingMetadata, Statistics, UserStatistics } from '../../types';
 export class FirebaseService implements OnModuleInit {
   private db: admin.firestore.Firestore;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: AppConfigService) {}
 
   onModuleInit() {
-    const credentialsPath = this.configService.get<string>('FIREBASE_CREDENTIALS_PATH');
+    const credentialsPath = this.configService.firebaseCredentialsPath;
     
     try {
       const serviceAccount = require(`../../../${credentialsPath}`);
@@ -21,13 +21,14 @@ export class FirebaseService implements OnModuleInit {
       });
 
       this.db = admin.firestore();
-      console.log('Firebase initialized successfully (Database only)');
+      console.log('✓ Firebase initialized successfully (Database only)');
     } catch (error) {
-      console.error('Error initializing Firebase:', error);
+      console.error('✗ Error initializing Firebase:', error);
       throw error;
     }
   }
 
+  // ... rest of the firebase service methods remain the same ...
   async saveRecordingMetadata(
     referenceText: string,
     transcribedText: string,
@@ -46,7 +47,7 @@ export class FirebaseService implements OnModuleInit {
         user_id: userId || 'anonymous',
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
         created_at: new Date().toISOString(),
-        api_version: 'openai',
+        api_version: 'nestjs',
         has_audio_file: false,
         ...metadata,
       };
@@ -167,7 +168,7 @@ export class FirebaseService implements OnModuleInit {
           total_recordings: 0,
           average_score: 0,
           total_users: 0,
-          api_version: 'openai',
+          api_version: 'nestjs',
         };
       }
       
@@ -194,7 +195,7 @@ export class FirebaseService implements OnModuleInit {
         average_score: Math.round((totalScore / recordings.length) * 100) / 100,
         total_users: uniqueUsers,
         score_distribution: scoreDistribution,
-        api_version: 'openai',
+        api_version: 'nestjs',
       };
     } catch (error) {
       console.error('Error getting statistics:', error);
@@ -202,7 +203,7 @@ export class FirebaseService implements OnModuleInit {
         total_recordings: 0,
         average_score: 0,
         total_users: 0,
-        api_version: 'openai',
+        api_version: 'nestjs',
       };
     }
   }
