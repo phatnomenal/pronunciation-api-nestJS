@@ -68,4 +68,47 @@ export class ScoringService {
     } else if (score >= 90) {
       grade = 'A';
       level = 'Excellent';
-      color
+      color = '#10b981';
+    } else if (score >= 85) {
+      grade = 'B+';
+      level = 'Very Good';
+      color = '#3b82f6';
+    } else if (score >= 80) {
+      grade = 'B';
+      level = 'Good';
+      color = '#3b82f6';
+    } else if (score >= 75) {
+      grade = 'B-';
+      level = 'Good';
+      color = '#3b82f6';
+    } else if (score >= 70) {
+      grade = 'C+';
+      level = 'Fair';
+      color = '#f59e0b';
+    } else if (score >= 65) {
+      grade = 'C';
+      level = 'Fair';
+      color = '#f59e0b';
+    } else if (score >= 60) {
+      grade = 'C-';
+      level = 'Fair';
+      color = '#f59e0b';
+    } else if (score >= 50) {
+      grade = 'D';
+      level = 'Needs Improvement';
+      color = '#ef4444';
+    } else {
+      grade = 'F';
+      level = 'Poor';
+      color = '#dc2626';
+    }
+    
+    return {
+      score,
+      grade,
+      level,
+      color,
+      percentage: score,
+    };
+  }
+}
